@@ -1,6 +1,6 @@
 
 /*
-- Identify the top 10 highest-paying Data Analytics roles that are available in EU.
+- Identify the top 20 highest-paying Data Analytics roles that are available in EU.
 - Focuses on job postings with specified salaries (remove nulls)
 - Why? Highlight the top-paying opportunities for Data Analysts, offering insights into employment options and location flexibility.
 */
@@ -9,6 +9,7 @@
 SELECT	
 	job_id,
 	job_title,
+  job_title_short,
 	job_location,
 	job_schedule_type,
 	salary_year_avg,
@@ -20,13 +21,14 @@ FROM
 LEFT JOIN company_dim ON job_postings_fact.company_id = company_dim.company_id
 
 where
-    job_location LIKE ANY(ARRAY['%Netherlands','%Belgium','%Austria%',
+    job_location LIKE ANY(ARRAY['%Netherlands%','%Belgium%','%Austria%',
         '%Croatia%','%Cyprus%','%Czechia %','%Denmark%','%Estonia%','%Finland%',
         '%France%','%Germany%','%Greece%','%Ireland%','%Italy%','%Latvia%',
         '%Lithuania%','%Luxembourg%','%Poland%','%Portugal%','%Romania%','%Slovakia%',
         '%Spain%','%Slovenia%','%Sweden%'
     ]) AND
 	job_title_short = 'Data Analyst' AND
+
 	salary_year_avg IS NOT NULL
 ORDER BY
     salary_year_avg DESC

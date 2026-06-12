@@ -17,7 +17,7 @@ WHERE
     AND job_work_from_home = True 
 GROUP BY
     skills
-ORDER BY
+ORDER B Y
     demand_count DESC
 LIMIT 5;
 
