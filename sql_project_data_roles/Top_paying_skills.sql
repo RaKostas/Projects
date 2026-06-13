@@ -1,8 +1,8 @@
 /*
 - Look at the average salary associated with each skill for Data Analyst positions
-- Focuses on roles with specified salaries, regardless of location
-- Why? It reveals how different skills impact salary levels for Data Analysts and 
-    helps identify the most financially rewarding skills to acquire or improve
+- Focuses on roles with specified salaries, in the EU area.
+
+Helps identify the most financially rewarding skills to acquire or improve
 */
 
 SELECT 
@@ -14,7 +14,12 @@ INNER JOIN skills_dim ON skills_job_dim.skill_id = skills_dim.skill_id
 WHERE
     job_title_short = 'Data Analyst'
     AND salary_year_avg IS NOT NULL
-    AND job_work_from_home = True 
+    AND job_location LIKE ANY(ARRAY['%Netherlands%','%Belgium%','%Austria%',
+        '%Croatia%','%Cyprus%','%Czechia %','%Denmark%','%Estonia%','%Finland%',
+        '%France%','%Germany%','%Greece%','%Ireland%','%Italy%','%Latvia%',
+        '%Lithuania%','%Luxembourg%','%Poland%','%Portugal%','%Romania%','%Slovakia%',
+        '%Spain%','%Slovenia%','%Sweden%'
+    ])
 GROUP BY
     skills
 ORDER BY
@@ -23,110 +28,113 @@ LIMIT 25;
 
 /*
 Here's a breakdown of the results for top paying skills for Data Analysts:
-- High Demand for Big Data & ML Skills: Top salaries are commanded by analysts skilled in big data technologies (PySpark, Couchbase), machine learning tools (DataRobot, Jupyter), and Python libraries (Pandas, NumPy), reflecting the industry's high valuation of data processing and predictive modeling capabilities.
-- Software Development & Deployment Proficiency: Knowledge in development and deployment tools (GitLab, Kubernetes, Airflow) indicates a lucrative crossover between data analysis and engineering, with a premium on skills that facilitate automation and efficient data pipeline management.
-- Cloud Computing Expertise: Familiarity with cloud and data engineering tools (Elasticsearch, Databricks, GCP) underscores the growing importance of cloud-based analytics environments, suggesting that cloud proficiency significantly boosts earning potential in data analytics.
+-High Demand for Cloud & Infrastructure Skills: Top salaries are associated with cloud and infrastructure technologies such as Terraform, AWS, Docker, and Linux, highlighting the growing value of analysts who can work with scalable data platforms and cloud environments.
+-Strong Premium for Data Engineering Expertise: Skills like Kafka, Spark, MongoDB, NoSQL, and BigQuery command high salaries, reflecting the increasing importance of large-scale data processing and modern data architectures.
+-Software Development skills (C, Flask, Spring, Node.js) boost earning potential, showing a growing overlap between analytics and engineering.
+-DevOps tools (GitLab, GitHub, Bash) also appear frequently, indicating that automation and deployment knowledge are increasingly valuable for analysts.
+
+Overall: The highest-paying Data Analyst roles favor professionals who combine analytics skills with data engineering, cloud, and software development expertise.
 
 [
   {
-    "skills": "pyspark",
-    "avg_salary": "208172"
+    "skills": "c",
+    "avg_salary": "200000"
   },
   {
-    "skills": "bitbucket",
-    "avg_salary": "189155"
+    "skills": "terraform",
+    "avg_salary": "165101"
   },
   {
-    "skills": "couchbase",
-    "avg_salary": "160515"
+    "skills": "mongo",
+    "avg_salary": "165000"
   },
   {
-    "skills": "watson",
-    "avg_salary": "160515"
+    "skills": "unify",
+    "avg_salary": "163782"
   },
   {
-    "skills": "datarobot",
-    "avg_salary": "155486"
-  },
-  {
-    "skills": "gitlab",
-    "avg_salary": "154500"
-  },
-  {
-    "skills": "swift",
-    "avg_salary": "153750"
-  },
-  {
-    "skills": "jupyter",
-    "avg_salary": "152777"
-  },
-  {
-    "skills": "pandas",
-    "avg_salary": "151821"
-  },
-  {
-    "skills": "elasticsearch",
-    "avg_salary": "145000"
-  },
-  {
-    "skills": "golang",
-    "avg_salary": "145000"
-  },
-  {
-    "skills": "numpy",
-    "avg_salary": "143513"
-  },
-  {
-    "skills": "databricks",
-    "avg_salary": "141907"
+    "skills": "smartsheet",
+    "avg_salary": "155000"
   },
   {
     "skills": "linux",
-    "avg_salary": "136508"
+    "avg_salary": "147376"
   },
   {
-    "skills": "kubernetes",
-    "avg_salary": "132500"
+    "skills": "nosql",
+    "avg_salary": "145313"
   },
   {
-    "skills": "atlassian",
-    "avg_salary": "131162"
+    "skills": "spring",
+    "avg_salary": "140905"
   },
   {
-    "skills": "twilio",
-    "avg_salary": "127000"
+    "skills": "gitlab",
+    "avg_salary": "126441"
   },
   {
-    "skills": "airflow",
-    "avg_salary": "126103"
+    "skills": "flask",
+    "avg_salary": "126040"
   },
   {
-    "skills": "scikit-learn",
-    "avg_salary": "125781"
+    "skills": "kafka",
+    "avg_salary": "120615"
   },
   {
-    "skills": "jenkins",
-    "avg_salary": "125436"
+    "skills": "flow",
+    "avg_salary": "114175"
   },
   {
-    "skills": "notion",
-    "avg_salary": "125000"
+    "skills": "aws",
+    "avg_salary": "113951"
   },
   {
-    "skills": "scala",
-    "avg_salary": "124903"
+    "skills": "docker",
+    "avg_salary": "112747"
   },
   {
-    "skills": "postgresql",
-    "avg_salary": "123879"
+    "skills": "github",
+    "avg_salary": "111977"
   },
   {
-    "skills": "gcp",
-    "avg_salary": "122500"
+    "skills": "spark",
+    "avg_salary": "111551"
   },
   {
-    "skills": "microstrategy",
-    "avg_salary": "121619"
+    "skills": "no-sql",
+    "avg_salary": "111175"
+  },
+  {
+    "skills": "angular",
+    "avg_salary": "111175"
+  },
+  {
+    "skills": "php",
+    "avg_salary": "111175"
+  },
+  {
+    "skills": "bash",
+    "avg_salary": "111175"
+  },
+  {
+    "skills": "node.js",
+    "avg_salary": "111175"
+  },
+  {
+    "skills": "npm",
+    "avg_salary": "111175"
+  },
+  {
+    "skills": "terminal",
+    "avg_salary": "111175"
+  },
+  {
+    "skills": "windows",
+    "avg_salary": "108750"
+  },
+  {
+    "skills": "bigquery",
+    "avg_salary": "108746"
   }
 ]
 */

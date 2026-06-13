@@ -1,51 +1,55 @@
 /*
-- Join job postings to inner join table 
+- Most in-demand skills for data analysts in the EU area.
 - Identify the top 5 in-demand skills for a data analyst.
-- Focus on all job postings.
-- Why? Retrieves the top 5 skills with the highest demand in the job market, 
-    providing insights into the most valuable skills for job seekers.
 */
 
 SELECT 
     skills,
-    COUNT(skills_job_dim.job_id) AS demand_count
+    COUNT(skills_job_dim.job_id) AS skills_popularity
 FROM job_postings_fact
 INNER JOIN skills_job_dim ON job_postings_fact.job_id = skills_job_dim.job_id
 INNER JOIN skills_dim ON skills_job_dim.skill_id = skills_dim.skill_id
 WHERE
-    job_title_short = 'Data Analyst' 
-    AND job_work_from_home = True 
+    job_title_short = 'Data Analyst' AND
+    job_location LIKE ANY(ARRAY['%Netherlands%','%Belgium%','%Austria%',
+        '%Croatia%','%Cyprus%','%Czechia %','%Denmark%','%Estonia%','%Finland%',
+        '%France%','%Germany%','%Greece%','%Ireland%','%Italy%','%Latvia%',
+        '%Lithuania%','%Luxembourg%','%Poland%','%Portugal%','%Romania%','%Slovakia%',
+        '%Spain%','%Slovenia%','%Sweden%'
+    ]) 
+
 GROUP BY
     skills
-ORDER B Y
-    demand_count DESC
+ORDER BY
+    skills_popularity DESC
 LIMIT 5;
 
 /*
 Here's the breakdown of the most demanded skills for data analysts in 2023
-SQL and Excel remain fundamental, emphasizing the need for strong foundational skills in data processing and spreadsheet manipulation.
-Programming and Visualization Tools like Python, Tableau, and Power BI are essential, pointing towards the increasing importance of technical skills in data storytelling and decision support.
+SQL remains the undisputed foundational skill, followed by Python as the leading programming language with 16,547 appearances.
+Excel remains highly essential, proving that traditional spreadsheet manipulation is still vital for everyday business roles.
+Visualization Tools like Tableau, and Power BI are also essential, solidifying the critical importance of turning complex data into visual insights.
 
 [
   {
     "skills": "sql",
-    "demand_count": "7291"
-  },
-  {
-    "skills": "excel",
-    "demand_count": "4611"
+    "skills_popularity": "23615"
   },
   {
     "skills": "python",
-    "demand_count": "4330"
+    "skills_popularity": "16547"
   },
   {
-    "skills": "tableau",
-    "demand_count": "3745"
+    "skills": "excel",
+    "skills_popularity": "14075"
   },
   {
     "skills": "power bi",
-    "demand_count": "2609"
+    "skills_popularity": "11919"
+  },
+  {
+    "skills": "tableau",
+    "skills_popularity": "10429"
   }
 ]
 */

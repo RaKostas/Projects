@@ -1,33 +1,38 @@
 /*
- What are the most optimal skills to learn (aka it’s in high demand and a high-paying skill)?
-- Identify skills in high demand and associated with high average salaries for Data Analyst roles
-- Concentrates on remote positions with specified salaries
-- Why? Targets skills that offer job security (high demand) and financial benefits (high salaries), 
-    offering strategic insights for career development in data analysis
+ The most optimal skills to learn (aka it’s in high demand and a high-paying skill).
+- Identify skills in high demand and associated with high average salaries for Data Analyst roles in EU.
+
 */
 
+
 -- Identifies skills in high demand for Data Analyst roles
--- Use Query #3
-WITH skills_demand AS (
+-- Option 1 with CTE
+
+WITH skills_popularity  AS (
     SELECT
         skills_dim.skill_id,
-        skills_dim.skills,
-        COUNT(skills_job_dim.job_id) AS demand_count
+        skills,
+        COUNT(skills_job_dim.job_id) AS skills_demand
     FROM job_postings_fact
     INNER JOIN skills_job_dim ON job_postings_fact.job_id = skills_job_dim.job_id
     INNER JOIN skills_dim ON skills_job_dim.skill_id = skills_dim.skill_id
     WHERE
         job_title_short = 'Data Analyst' 
         AND salary_year_avg IS NOT NULL
-        AND job_work_from_home = True 
+        AND job_location LIKE ANY(ARRAY['%Netherlands%','%Belgium%','%Austria%',
+        '%Croatia%','%Cyprus%','%Czechia %','%Denmark%','%Estonia%','%Finland%',
+        '%France%','%Germany%','%Greece%','%Ireland%','%Italy%','%Latvia%',
+        '%Lithuania%','%Luxembourg%','%Poland%','%Portugal%','%Romania%','%Slovakia%',
+        '%Spain%','%Slovenia%','%Sweden%'])
     GROUP BY
         skills_dim.skill_id
 ), 
 -- Skills with high average salaries for Data Analyst roles
--- Use Query #4
+
 average_salary AS (
     SELECT 
-        skills_job_dim.skill_id,
+        skills_dim.skill_id,
+        skills,
         ROUND(AVG(job_postings_fact.salary_year_avg), 0) AS avg_salary
     FROM job_postings_fact
     INNER JOIN skills_job_dim ON job_postings_fact.job_id = skills_job_dim.job_id
@@ -35,31 +40,37 @@ average_salary AS (
     WHERE
         job_title_short = 'Data Analyst'
         AND salary_year_avg IS NOT NULL
-        AND job_work_from_home = True 
+        AND job_location LIKE ANY(ARRAY['%Netherlands%','%Belgium%','%Austria%',
+        '%Croatia%','%Cyprus%','%Czechia %','%Denmark%','%Estonia%','%Finland%',
+        '%France%','%Germany%','%Greece%','%Ireland%','%Italy%','%Latvia%',
+        '%Lithuania%','%Luxembourg%','%Poland%','%Portugal%','%Romania%','%Slovakia%',
+        '%Spain%','%Slovenia%','%Sweden%'])
     GROUP BY
-        skills_job_dim.skill_id
+         skills_dim.skill_id
 )
 -- Return high demand and high salaries for 10 skills 
 SELECT
-    skills_demand.skill_id,
-    skills_demand.skills,
-    demand_count,
-    avg_salary
+     skills_popularity.skill_id,
+     skills_popularity.skills,
+     skills_demand,
+     avg_salary
 FROM
-    skills_demand
-INNER JOIN  average_salary ON skills_demand.skill_id = average_salary.skill_id
-WHERE  
-    demand_count > 10
+    skills_popularity
+INNER JOIN  average_salary ON skills_popularity.skill_id = average_salary.skill_id
+
 ORDER BY
-    avg_salary DESC,
-    demand_count DESC
+     skills_demand DESC,
+    avg_salary DESC
+   
 LIMIT 25;
 
+
+-- OPTION 2
 -- rewriting this same query more concisely
 SELECT 
     skills_dim.skill_id,
     skills_dim.skills,
-    COUNT(skills_job_dim.job_id) AS demand_count,
+    COUNT(skills_job_dim.job_id) AS skills_demand,
     ROUND(AVG(job_postings_fact.salary_year_avg), 0) AS avg_salary
 FROM job_postings_fact
 INNER JOIN skills_job_dim ON job_postings_fact.job_id = skills_job_dim.job_id
@@ -67,173 +78,173 @@ INNER JOIN skills_dim ON skills_job_dim.skill_id = skills_dim.skill_id
 WHERE
     job_title_short = 'Data Analyst'
     AND salary_year_avg IS NOT NULL
-    AND job_work_from_home = True 
+    AND job_location LIKE ANY(ARRAY['%Netherlands%','%Belgium%','%Austria%',
+        '%Croatia%','%Cyprus%','%Czechia %','%Denmark%','%Estonia%','%Finland%',
+        '%France%','%Germany%','%Greece%','%Ireland%','%Italy%','%Latvia%',
+        '%Lithuania%','%Luxembourg%','%Poland%','%Portugal%','%Romania%','%Slovakia%',
+        '%Spain%','%Slovenia%','%Sweden%'])
 GROUP BY
     skills_dim.skill_id
-HAVING
-    COUNT(skills_job_dim.job_id) > 10
 ORDER BY
-    avg_salary DESC,
-    demand_count DESC
+     skills_demand DESC,
+    avg_salary DESC
 LIMIT 25;
 
 /*
-Here's a breakdown of the most optimal skills for Data Analysts in 2023: 
-High-Demand Programming Languages: Python and R stand out for their high demand, with demand counts of 236 and 148 respectively. Despite their high demand, their average salaries are around $101,397 for Python and $100,499 for R, indicating that proficiency in these languages is highly valued but also widely available.
-Cloud Tools and Technologies: Skills in specialized technologies such as Snowflake, Azure, AWS, and BigQuery show significant demand with relatively high average salaries, pointing towards the growing importance of cloud platforms and big data technologies in data analysis.
-Business Intelligence and Visualization Tools: Tableau and Looker, with demand counts of 230 and 49 respectively, and average salaries around $99,288 and $103,795, highlight the critical role of data visualization and business intelligence in deriving actionable insights from data.
-Database Technologies: The demand for skills in traditional and NoSQL databases (Oracle, SQL Server, NoSQL) with average salaries ranging from $97,786 to $104,534, reflects the enduring need for data storage, retrieval, and management expertise.
+Results 
+Most high in demand skills are by far Python and SQL with avg yearly salary around 93000$,
+while importand tool are still Tableu, Excel and PowerBi.
 
 [
   {
-    "skill_id": 8,
-    "skills": "go",
-    "demand_count": "27",
-    "avg_salary": "115320"
-  },
-  {
-    "skill_id": 234,
-    "skills": "confluence",
-    "demand_count": "11",
-    "avg_salary": "114210"
-  },
-  {
-    "skill_id": 97,
-    "skills": "hadoop",
-    "demand_count": "22",
-    "avg_salary": "113193"
-  },
-  {
-    "skill_id": 80,
-    "skills": "snowflake",
-    "demand_count": "37",
-    "avg_salary": "112948"
-  },
-  {
-    "skill_id": 74,
-    "skills": "azure",
-    "demand_count": "34",
-    "avg_salary": "111225"
-  },
-  {
-    "skill_id": 77,
-    "skills": "bigquery",
-    "demand_count": "13",
-    "avg_salary": "109654"
-  },
-  {
-    "skill_id": 76,
-    "skills": "aws",
-    "demand_count": "32",
-    "avg_salary": "108317"
-  },
-  {
-    "skill_id": 4,
-    "skills": "java",
-    "demand_count": "17",
-    "avg_salary": "106906"
-  },
-  {
-    "skill_id": 194,
-    "skills": "ssis",
-    "demand_count": "12",
-    "avg_salary": "106683"
-  },
-  {
-    "skill_id": 233,
-    "skills": "jira",
-    "demand_count": "20",
-    "avg_salary": "104918"
-  },
-  {
-    "skill_id": 79,
-    "skills": "oracle",
-    "demand_count": "37",
-    "avg_salary": "104534"
-  },
-  {
-    "skill_id": 185,
-    "skills": "looker",
-    "demand_count": "49",
-    "avg_salary": "103795"
-  },
-  {
-    "skill_id": 2,
-    "skills": "nosql",
-    "demand_count": "13",
-    "avg_salary": "101414"
+    "skill_id": 0,
+    "skills": "sql",
+    "skills_demand": "174",
+    "avg_salary": "93155"
   },
   {
     "skill_id": 1,
     "skills": "python",
-    "demand_count": "236",
-    "avg_salary": "101397"
-  },
-  {
-    "skill_id": 5,
-    "skills": "r",
-    "demand_count": "148",
-    "avg_salary": "100499"
-  },
-  {
-    "skill_id": 78,
-    "skills": "redshift",
-    "demand_count": "16",
-    "avg_salary": "99936"
-  },
-  {
-    "skill_id": 187,
-    "skills": "qlik",
-    "demand_count": "13",
-    "avg_salary": "99631"
+    "skills_demand": "128",
+    "avg_salary": "93852"
   },
   {
     "skill_id": 182,
     "skills": "tableau",
-    "demand_count": "230",
-    "avg_salary": "99288"
+    "skills_demand": "93",
+    "avg_salary": "88544"
   },
   {
-    "skill_id": 197,
-    "skills": "ssrs",
-    "demand_count": "14",
-    "avg_salary": "99171"
+    "skill_id": 181,
+    "skills": "excel",
+    "skills_demand": "78",
+    "avg_salary": "78207"
+  },
+  {
+    "skill_id": 183,
+    "skills": "power bi",
+    "skills_demand": "53",
+    "avg_salary": "84391"
+  },
+  {
+    "skill_id": 5,
+    "skills": "r",
+    "skills_demand": "49",
+    "avg_salary": "91636"
+  },
+  {
+    "skill_id": 74,
+    "skills": "azure",
+    "skills_demand": "43",
+    "avg_salary": "108679"
   },
   {
     "skill_id": 92,
     "skills": "spark",
-    "demand_count": "13",
-    "avg_salary": "99077"
+    "skills_demand": "36",
+    "avg_salary": "111551"
   },
   {
-    "skill_id": 13,
-    "skills": "c++",
-    "demand_count": "11",
-    "avg_salary": "98958"
+    "skill_id": 185,
+    "skills": "looker",
+    "skills_demand": "34",
+    "avg_salary": "98792"
   },
   {
-    "skill_id": 186,
-    "skills": "sas",
-    "demand_count": "63",
-    "avg_salary": "98902"
+    "skill_id": 8,
+    "skills": "go",
+    "skills_demand": "26",
+    "avg_salary": "81554"
   },
   {
-    "skill_id": 7,
-    "skills": "sas",
-    "demand_count": "63",
-    "avg_salary": "98902"
+    "skill_id": 189,
+    "skills": "sap",
+    "skills_demand": "24",
+    "avg_salary": "93247"
   },
   {
-    "skill_id": 61,
-    "skills": "sql server",
-    "demand_count": "35",
-    "avg_salary": "97786"
+    "skill_id": 76,
+    "skills": "aws",
+    "skills_demand": "22",
+    "avg_salary": "113951"
   },
   {
-    "skill_id": 9,
-    "skills": "javascript",
-    "demand_count": "20",
-    "avg_salary": "97587"
+    "skill_id": 81,
+    "skills": "gcp",
+    "skills_demand": "20",
+    "avg_salary": "105997"
+  },
+  {
+    "skill_id": 196,
+    "skills": "powerpoint",
+    "skills_demand": "17",
+    "avg_salary": "74804"
+  },
+  {
+    "skill_id": 22,
+    "skills": "vba",
+    "skills_demand": "16",
+    "avg_salary": "83705"
+  },
+  {
+    "skill_id": 96,
+    "skills": "airflow",
+    "skills_demand": "15",
+    "avg_salary": "99194"
+  },
+  {
+    "skill_id": 215,
+    "skills": "flow",
+    "skills_demand": "14",
+    "avg_salary": "114175"
+  },
+  {
+    "skill_id": 80,
+    "skills": "snowflake",
+    "skills_demand": "14",
+    "avg_salary": "98939"
+  },
+  {
+    "skill_id": 210,
+    "skills": "git",
+    "skills_demand": "13",
+    "avg_salary": "105590"
+  },
+  {
+    "skill_id": 4,
+    "skills": "java",
+    "skills_demand": "13",
+    "avg_salary": "102784"
+  },
+  {
+    "skill_id": 93,
+    "skills": "pandas",
+    "skills_demand": "13",
+    "avg_salary": "92446"
+  },
+  {
+    "skill_id": 77,
+    "skills": "bigquery",
+    "skills_demand": "12",
+    "avg_salary": "108746"
+  },
+  {
+    "skill_id": 75,
+    "skills": "databricks",
+    "skills_demand": "12",
+    "avg_salary": "107256"
+  },
+  {
+    "skill_id": 187,
+    "skills": "qlik",
+    "skills_demand": "12",
+    "avg_salary": "88364"
+  },
+  {
+    "skill_id": 188,
+    "skills": "word",
+    "skills_demand": "12",
+    "avg_salary": "85459"
   }
 ]
 */
