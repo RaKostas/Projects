@@ -26,7 +26,7 @@ LIMIT 5;
 
 /*
 Here's the breakdown of the most demanded skills for data analysts in 2023
-SQL remains the undisputed foundational skill, followed by Python as the leading programming language with 16,547 appearances.
+SQL remains the undisputed foundational skill, followed by Python as the leading programming language with 23,615 appearances.
 Excel remains highly essential, proving that traditional spreadsheet manipulation is still vital for everyday business roles.
 Visualization Tools like Tableau, and Power BI are also essential, solidifying the critical importance of turning complex data into visual insights.
 
